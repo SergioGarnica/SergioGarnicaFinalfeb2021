@@ -1,4 +1,4 @@
-package apellido.nombre;
+package garnica.sergio;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,10 +9,10 @@ public class Telepase extends Cabina {
  * Atribito donde se almacentodos los tags habilitados para el telepase
  * No se permiten tags duplicados ( 2 tags son iguales cuando tienen el mismo id)
  */
-	private Set<Tag> tags;
+	private Set<Tag> tags=new HashSet <Tag>();
 
 	public Telepase(Integer numero) {
-
+       super(numero);
 		
 		
 		
@@ -24,6 +24,11 @@ public class Telepase extends Cabina {
 
 	public Boolean cargarTag(Tag tag) {
 		
+		for (Tag tag1 : tags) {
+			tag1.setSaldo(tag1.getSaldo()+tag.getSaldo());
+			return true;
+		}
+		return false;
 	}
 
 	
@@ -38,7 +43,23 @@ public class Telepase extends Cabina {
 	 * 3) en caso que el importe que tiene el tag no alcanza para pagar el peaje laza una SaldoInsuficienteError
 	 * 
 	 */
-	public void pagarAutomatico(Vehiculo vehiculo)	{
+	public void pagarAutomatico(Vehiculo vehiculo)throws TagNoEncontradoException,VehiculoNoPermitidoExceptions,SaldoInsuficienteError	{
+		Cabina cabina =null;
+		if(vehiculo.getTipo()=="AutoBus") {
+			
+			for (Tag tag : tags) {
+				if(verifcarExiste(tag)) {
+					if(tag.getSaldo()>=cabina.getTarifaAutoBus()) {
+						tag.setSaldo(tag.getSaldo()-cabina.getTarifaAutoBus());
+					}
+					throw new SaldoInsuficienteError();
+				}
+				throw new TagNoEncontradoException();
+			}
+			
+		}
+			
+		 throw new VehiculoNoPermitidoExceptions();
 	}
 
 
